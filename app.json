@@ -1,0 +1,7 @@
+{
+  "name": "Rho-bot email webhook",
+  "description": "Rho-bot email webhook",
+  "repository": "https://github.com/turbosnail9/rhobot-email",
+  "logo": "https://rhodium-staging.herokuapp.com/rh-logo.png",
+  "keywords": ["chatbot", "natural language"]
+}
