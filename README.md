@@ -1,15 +1,13 @@
-# RhoBot- email webhook implementation in Python
+# Quantified Team - a Python webhook implementation of quantified self data for the Rhodium team
 
-This is a really simple webhook implementation that gets Api.ai classification JSON (i.e. a JSON output of Api.ai /query endpoint) and returns a fulfillment response.
+This is a really simple webhook implementation that uses the [Human API](https://www.humanapi.co/). It parses movement data and sends it to the [rhodium website](http://rhodium.io).
 
-More info about Api.ai webhooks could be found here:
-[Api.ai Webhook](https://docs.api.ai/docs/webhook)
 
 # Deploy to:
 [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 # What does the service do?
-It's a weather information fulfillment service that uses [Yahoo! Weather API](https://developer.yahoo.com/weather/).
-The services takes the `geo-city` parameter from the action, performes geolocation for the city and requests weather information from Yahoo! Weather public API.
+It returns physical activity information from the Moves App via [Human API](https://www.humanapi.co/).
+The services takes the `steps` and `calories` parameters from the action.
 
-The service packs the result in the Api.ai webhook-compatible response JSON and returns it to Api.ai.
+The service packs the result in a webhook response JSON and returns it to the rhodium website frontend.
