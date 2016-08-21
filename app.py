@@ -35,11 +35,14 @@ def processHumanAPIRequest(req):
 
 def parseHumanData(data):
     steps = data[0]["steps"]
-    return steps
+    calories = data[0]["calories"]
+    data = [steps, calories]
+    return data
 
 def makeWebhookResult(data):
     return {
-        "steps": data
+        "steps": data[0],
+        "calories": data[1]
     }
 
 
