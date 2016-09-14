@@ -64,28 +64,28 @@ def makeWebhookResult(data):
         "calories": data[1],
         "city": data[2],
         "state": data[3]
-        }
+        },
     "Alexandra":
         {
         "steps": data[0],
         "calories": data[1],
         "city": data[2],
         "state": data[3]
-        }
+        },
     "Daskalov":
         {
         "steps": data[0],
         "calories": data[1],
         "city": data[2],
         "state": data[3]
-        }
+        },
     "Nadim":
         {
         "steps": data[0],
         "calories": data[1],
         "city": data[2],
         "state": data[3]
-        }
+        },
     "Imran":
         {
         "steps": data[0],
