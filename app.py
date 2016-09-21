@@ -73,26 +73,28 @@ def webhook():
 def processHumanAPIRequest(req):
     activityurl = "https://api.humanapi.co/v1/human/activities/summaries?access_token="
     locationurl = "https://api.humanapi.co/v1/human/locations?access_token="
-    user_tokens = ['HUMANAPI_ACCESS_TOKEN_DASKALOV','HUMANAPI_ACCESS_TOKEN_ARI','HUMANAPI_ACCESS_TOKEN_NADIM', 'HUMANAPI_ACCESS_TOKEN_ALEXANDRA']
-    daskalov_access_token = os.environ['HUMANAPI_ACCESS_TOKEN_DASKALOV']
-    daskalov_activity_url = activityurl + daskalov_access_token + "&source=moves&limit=1"
-    daskalov_location_url = locationurl + daskalov_access_token + "&source=moves&limit=1"
-    daskalov_activity = urllib.urlopen(daskalov_activity_url).read()
-    daskalov_location = urllib.urlopen(daskalov_location_url).read()
-    daskalov_activity_data = json.loads(daskalov_activity)
-    daskalov_location_data = json.loads(daskalov_location)
-    daskalov_data = parseHumanData(daskalov_activity_data, daskalov_location_data)
-
-
-    ari_access_token = os.environ['HUMANAPI_ACCESS_TOKEN_ARI']
-    ari_activity_url = activityurl + ari_access_token + "&source=moves&limit=1"
-    ari_location_url = locationurl + ari_access_token + "&source=moves&limit=1"
-    ari_activity = urllib.urlopen(ari_activity_url).read()
-    ari_location = urllib.urlopen(ari_location_url).read()
-    ari_activity_data = json.loads(ari_activity)
-    ari_location_data = json.loads(ari_location)
-    ari_data = parseHumanData(ari_activity_data, ari_location_data)
-    res = makeWebhookResult(ari_data,daskalov_data)
+    user_tokens = {'daskalov':HUMANAPI_ACCESS_TOKEN_DASKALOV,'ari':HUMANAPI_ACCESS_TOKEN_ARI,'nadim':HUMANAPI_ACCESS_TOKEN_NADIM, 'alex':HUMANAPI_ACCESS_TOKEN_ALEXANDRA}
+    user_data = [None]*4
+    yesterday = date.today() - timedelta(1)
+    for key, value in user_tokens.iteritems():
+        access_token = os.environ[value]
+        #access_token = value
+        activity_url = activityurl + access_token + "&source=moves&end_date="+ date.today().strftime('%Y-%m-%d') + "&limit=1"
+        location_url = locationurl + access_token + "&source=moves&end_date="+ date.today().strftime('%Y-%m-%d') + "&limit=1"
+        activity = urllib.urlopen(activity_url).read()
+        location = urllib.urlopen(location_url).read()
+        activity_data = json.loads(activity)
+        location_data = json.loads(location)
+        data = parseHumanData(activity_data, location_data)
+        if key == 'ari':
+            user_data[0] = data
+        if key == 'alex':
+            user_data[1] = data
+        if key == 'daskalov':
+            user_data[2] = data
+        if key == 'nadim':
+            user_data[3] = data
+    res = makeWebhookResult(user_data)
     return res
 
 def parseHumanData(activity_data,location_data):
@@ -109,42 +111,42 @@ def parseHumanData(activity_data,location_data):
     return data
 
 
-def makeWebhookResult(ari_data, daskalov_data):
+def makeWebhookResult(user_data):
     return {
     "Ari":
         {
-        "steps": ari_data[0],
-        "calories": ari_data[1],
-        "city": ari_data[2],
-        "state": ari_data[3]
+        "steps": user_data[0][0],
+        "calories": user_data[0][1],
+        "city": user_data[0][2],
+        "state": user_data[0][3]
         },
     "Alexandra":
         {
-        "steps": ari_data[0],
-        "calories": ari_data[1],
-        "city": ari_data[2],
-        "state": ari_data[3]
+        "steps": user_data[1][0],
+        "calories": user_data[1][1],
+        "city": user_data[1][2],
+        "state": user_data[1][3]
         },
     "Daskalov":
         {
-        "steps": daskalov_data[0],
-        "calories": daskalov_data[1],
-        "city": daskalov_data[2],
-        "state": daskalov_data[3]
+        "steps": user_data[2][0],
+        "calories": user_data[2][1],
+        "city": user_data[2][2],
+        "state": user_data[2][3]
         },
     "Nadim":
         {
-        "steps": ari_data[0],
-        "calories": ari_data[1],
-        "city": ari_data[2],
-        "state": ari_data[3]
+        "steps": user_data[3][0],
+        "calories": user_data[3][1],
+        "city": user_data[3][2],
+        "state": user_data[3][3]
         },
     "Imran":
         {
-        "steps": ari_data[0],
-        "calories": ari_data[1],
-        "city": ari_data[2],
-        "state": ari_data[3]
+        "steps": user_data[3][0],
+        "calories": user_data[3][1],
+        "city": user_data[3][2],
+        "state": user_data[3][3]
         }
     }
 
