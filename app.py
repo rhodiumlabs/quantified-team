@@ -17,6 +17,7 @@ app = Flask(__name__)
 
 
 @app.route('/webhook', methods=['POST'])
+@crossdomain(origin='*')
 def webhook():
     req = request.get_json(silent=True, force=True)
     res = processHumanAPIRequest(req)
@@ -26,15 +27,6 @@ def webhook():
     return r
 
 def processHumanAPIRequest(req):
-
-    # username = '31c54b1e5bb56c1e8c4a49e22df3254d20eaed3f:'
-    # password = None
-    # clientID = "b7cfb75957a179cc624695699ce5a136a01a9196"
-    # yesterday = date.today() - timedelta(1)
-    # url = "https://api.humanapi.co/v1/apps/"+ clientID +"/users/activities/summaries?updated_since=" + yesterday.strftime("%Y%m%d%H%M%S%Z" )+"&source=moves&limit=1"
-    # r = requests.get(url, auth=(username, password))
-    # print r.json()
-
     activityurl = "https://api.humanapi.co/v1/human/activities/summaries?access_token="
     locationurl = "https://api.humanapi.co/v1/human/locations?access_token="
     daskalov_access_token = os.environ['HUMANAPI_ACCESS_TOKEN_DASKALOV']
