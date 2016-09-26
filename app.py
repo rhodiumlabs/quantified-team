@@ -14,6 +14,20 @@ from functools import update_wrapper
 
 geolocator = Nominatim()
 
+
+# Flask app should start in global layout
+app = Flask(__name__)
+
+
+@app.route('/webhook', methods=['POST'])
+@crossdomain(origin='*')
+def webhook():
+    req = request.get_json(silent=True, force=True)
+    res = processHumanAPIRequest(req)
+    res = json.dumps(res, indent=4)
+    r = make_response(res)
+    return r
+
 def crossdomain(origin=None, methods=None, headers=None,
                 max_age=21600, attach_to_all=True,
                 automatic_options=True):
@@ -54,20 +68,7 @@ def crossdomain(origin=None, methods=None, headers=None,
         f.provide_automatic_options = False
         return update_wrapper(wrapped_function, f)
     return decorator
-
-# Flask app should start in global layout
-app = Flask(__name__)
-
-
-@app.route('/webhook', methods=['POST'])
-@crossdomain(origin='*')
-def webhook():
-    req = request.get_json(silent=True, force=True)
-    res = processHumanAPIRequest(req)
-    res = json.dumps(res, indent=4)
-    r = make_response(res)
-    return r
-
+    
 def processHumanAPIRequest(req):
     activityurl = "https://api.humanapi.co/v1/human/activities/summaries?access_token="
     locationurl = "https://api.humanapi.co/v1/human/locations?access_token="
