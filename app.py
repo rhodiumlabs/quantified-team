@@ -12,22 +12,11 @@ from flask import make_response, current_app
 from geopy.geocoders import Nominatim
 from functools import update_wrapper
 
-geolocator = Nominatim()
+
 
 
 # Flask app should start in global layout
 app = Flask(__name__)
-
-
-@app.route('/webhook', methods=['POST'])
-#@crossdomain(origin='*')
-def webhook():
-    req = request.get_json(silent=True, force=True)
-    res = processHumanAPIRequest(req)
-    res = json.dumps(res, indent=4)
-    r = make_response(res)
-    r.headers['Access-Control-Allow-Origin'] = "*"
-    return r
 
 def crossdomain(origin=None, methods=None, headers=None,
                 max_age=21600, attach_to_all=True,
@@ -70,6 +59,16 @@ def crossdomain(origin=None, methods=None, headers=None,
         return update_wrapper(wrapped_function, f)
     return decorator
 
+@app.route('/webhook', methods=['POST'])
+@crossdomain(origin='*')
+def webhook():
+    req = request.get_json(silent=True, force=True)
+    res = processHumanAPIRequest(req)
+    res = json.dumps(res, indent=4)
+    r = make_response(res)
+    r.headers['Access-Control-Allow-Origin'] = "*"
+    return r
+
 def processHumanAPIRequest(req):
     activityurl = "https://api.humanapi.co/v1/human/activities/summaries?access_token="
     locationurl = "https://api.humanapi.co/v1/human/locations?access_token="
@@ -103,6 +102,7 @@ def parseHumanData(activity_data,location_data):
     lat = str(location_data[0]["location"]["lat"])
     lon = str(location_data[0]["location"]["lon"])
     coord = lat + "," + lon
+    geolocator = Nominatim()
     location = geolocator.reverse(coord, exactly_one=True)
     address = location.raw['address']
     city = address.get('city', '')
