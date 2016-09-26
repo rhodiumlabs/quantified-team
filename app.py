@@ -26,6 +26,7 @@ def webhook():
     res = processHumanAPIRequest(req)
     res = json.dumps(res, indent=4)
     r = make_response(res)
+    r.headers['Access-Control-Allow-Origin'] = "*"
     return r
 
 def crossdomain(origin=None, methods=None, headers=None,
@@ -68,7 +69,7 @@ def crossdomain(origin=None, methods=None, headers=None,
         f.provide_automatic_options = False
         return update_wrapper(wrapped_function, f)
     return decorator
-    
+
 def processHumanAPIRequest(req):
     activityurl = "https://api.humanapi.co/v1/human/activities/summaries?access_token="
     locationurl = "https://api.humanapi.co/v1/human/locations?access_token="
