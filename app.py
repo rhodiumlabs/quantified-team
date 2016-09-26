@@ -12,9 +12,6 @@ from flask import make_response, current_app
 from geopy.geocoders import Nominatim
 from functools import update_wrapper
 
-
-
-
 # Flask app should start in global layout
 app = Flask(__name__)
 
@@ -72,12 +69,16 @@ def webhook():
 def processHumanAPIRequest(req):
     activityurl = "https://api.humanapi.co/v1/human/activities/summaries?access_token="
     locationurl = "https://api.humanapi.co/v1/human/locations?access_token="
+    HUMANAPI_ACCESS_TOKEN_ARI = '4srO2WURoAjbcu6Nb7o17I0rts4=XlfWVVEs07c3d5ff6201e82d11c3c92d7c5d78e6ac8cd292d8463932d917895b328523502060ff64e43e9a006ef701f7ebe69d1fab932bad9de927fd81972edfc639e965278ee5b6b156c10b828e13280cc93c47b9570f05f6b41add138add836130d4efba3b562a7e1ec8c748852e34bec0cb15'
+    HUMANAPI_ACCESS_TOKEN_NADIM = '4pvKEvkKl97XyQTDfDoLUl9IkwA=z_OsbYVm59c5a2230442cfa1a6a9dec06f306b4835341e9eba6c0705a51fea71d7be7b7ae30e81dc93e6ef1990e871de4ed1d99b788be294c22ff52f4edc88e77074414a009b894d6944c47cbe70fcc264c0b4822eb765e1fb4e97b58b630372a86a4601c438507cbe5a4a6d9977fe10db6d2462'
+    HUMANAPI_ACCESS_TOKEN_DASKALOV = 'ixrUiUHcgvhnT4H-NE0s7kXk10I=b2f_bH3z23a1bf0d2f3f8f71795d7801e5ecd6e84a6c51074fbecf6846308bb2334d08807e5934d86a3af4d3820e04c431ed297d84932080c51edd9c9f6d6f68c8b0150692dc1d3b43914bb049273b698b406ca42aada2c941a3cfc7fe85d9a6212f4e5fdaf314d6010fea0aecd5f1b2fb615429'
+    HUMANAPI_ACCESS_TOKEN_ALEXANDRA = 'x3ovk9gP_iZcAfitukPF5pp-4Ug=ZsoWo0sL3a59668cb4f2057b3e26e73bb31f4418402898722d9917c44600fe28b668f1791ef9047bb7d2c3e4267a7e348e203c92ed56c409b39fee7397f68aec18d56eb4afd6d4662ad2952de3ffdb0528aa367577b033e4d0704860b0df4c711d770601a16aa38f61f2bc9dd773079628a1b822'
     user_tokens = {'daskalov':HUMANAPI_ACCESS_TOKEN_DASKALOV,'ari':HUMANAPI_ACCESS_TOKEN_ARI,'nadim':HUMANAPI_ACCESS_TOKEN_NADIM, 'alex':HUMANAPI_ACCESS_TOKEN_ALEXANDRA}
     user_data = [None]*4
     yesterday = date.today() - timedelta(1)
     for key, value in user_tokens.iteritems():
-        access_token = os.environ[value]
-        #access_token = value
+        #access_token = os.environ[value]
+        access_token = value
         activity_url = activityurl + access_token + "&source=moves&end_date="+ date.today().strftime('%Y-%m-%d') + "&limit=1"
         location_url = locationurl + access_token + "&source=moves&end_date="+ date.today().strftime('%Y-%m-%d') + "&limit=1"
         activity = urllib.urlopen(activity_url).read()
