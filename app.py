@@ -69,12 +69,11 @@ def webhook():
 def processHumanAPIRequest(req):
     activityurl = "https://api.humanapi.co/v1/human/activities/summaries?access_token="
     locationurl = "https://api.humanapi.co/v1/human/locations?access_token="
-    user_tokens = {'daskalov':HUMANAPI_ACCESS_TOKEN_DASKALOV,'ari':HUMANAPI_ACCESS_TOKEN_ARI,'nadim':HUMANAPI_ACCESS_TOKEN_NADIM, 'alex':HUMANAPI_ACCESS_TOKEN_ALEXANDRA}
+    user_tokens = {'daskalov':'HUMANAPI_ACCESS_TOKEN_DASKALOV','ari':'HUMANAPI_ACCESS_TOKEN_ARI','nadim':'HUMANAPI_ACCESS_TOKEN_NADIM', 'alex':'HUMANAPI_ACCESS_TOKEN_ALEXANDRA'}
     user_data = [None]*4
     yesterday = date.today() - timedelta(1)
     for key, value in user_tokens.iteritems():
         access_token = os.environ[value]
-        print access_token
         #access_token = value
         activity_url = activityurl + access_token + "&source=moves&end_date="+ date.today().strftime('%Y-%m-%d') + "&limit=1"
         location_url = locationurl + access_token + "&source=moves&end_date="+ date.today().strftime('%Y-%m-%d') + "&limit=1"
