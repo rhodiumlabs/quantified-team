@@ -10,10 +10,9 @@ from flask import Flask
 from flask import request, Response
 from flask import make_response, current_app
 from geopy.geocoders import Nominatim
-geolocator = Nominatim()
-from datetime import timedelta
 from functools import update_wrapper
 
+geolocator = Nominatim()
 
 def crossdomain(origin=None, methods=None, headers=None,
                 max_age=21600, attach_to_all=True,
@@ -67,7 +66,6 @@ def webhook():
     res = processHumanAPIRequest(req)
     res = json.dumps(res, indent=4)
     r = make_response(res)
-    r.headers['Content-Type'] = 'application/json'
     return r
 
 def processHumanAPIRequest(req):
