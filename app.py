@@ -2,8 +2,10 @@
 
 import urllib
 import requests
+import requests_cache
 import json
 import os
+import time
 
 from datetime import date, timedelta
 from flask import Flask
@@ -11,6 +13,9 @@ from flask import request, Response
 from flask import make_response, current_app
 from geopy.geocoders import Nominatim
 from functools import update_wrapper
+
+
+requests_cache.install_cache('moves-data')
 
 # Flask app should start in global layout
 app = Flask(__name__)
@@ -74,13 +79,13 @@ def processHumanAPIRequest(req):
     yesterday = date.today() - timedelta(1)
     for key, value in user_tokens.iteritems():
         access_token = os.environ[value]
-        #access_token = value
         activity_url = activityurl + access_token + "&source=moves&end_date="+ date.today().strftime('%Y-%m-%d') + "&limit=1"
         location_url = locationurl + access_token + "&source=moves&end_date="+ date.today().strftime('%Y-%m-%d') + "&limit=1"
-        activity = urllib.urlopen(activity_url).read()
-        location = urllib.urlopen(location_url).read()
-        activity_data = json.loads(activity)
-        location_data = json.loads(location)
+
+        activity = requests.get(activity_url)
+        location = requests.get(location_url)
+        activity_data = json.loads(activity.content)
+        location_data = json.loads(location.content)
         data = parseHumanData(activity_data, location_data)
         if key == 'ari':
             user_data[0] = data
@@ -154,4 +159,4 @@ if __name__ == '__main__':
 
     print "Starting app on port %d" % port
 
-    app.run(debug=False, port=port, host='0.0.0.0')
+    app.run(debug=True, port=port, host='0.0.0.0')
