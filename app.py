@@ -66,7 +66,7 @@ def crossdomain(origin=None, methods=None, headers=None,
 
 @app.route('/webhook', methods=['POST'])
 @crossdomain(origin='*')
-@cache.cached(timeout=50)
+@cache.cached(timeout=3600)
 def webhook():
     start_time = time.time()
     req = request.get_json(silent=True, force=True)
