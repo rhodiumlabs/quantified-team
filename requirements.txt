@@ -2,3 +2,4 @@ Flask==0.10.1
 geopy==1.11.0
 requests==2.11.1
 requests_cache==0.4.12
+Flask-Cache==0.13.1
