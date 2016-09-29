@@ -11,14 +11,17 @@ from datetime import date, timedelta
 from flask import Flask
 from flask import request, Response
 from flask import make_response, current_app
+from flask.ext.cache import Cache
 from geopy.geocoders import Nominatim
 from functools import update_wrapper
 
-
+geolocator = Nominatim()
 requests_cache.install_cache('moves-data')
+
 
 # Flask app should start in global layout
 app = Flask(__name__)
+cache = Cache(app,config={'CACHE_TYPE': 'simple'})
 
 def crossdomain(origin=None, methods=None, headers=None,
                 max_age=21600, attach_to_all=True,
@@ -63,12 +66,15 @@ def crossdomain(origin=None, methods=None, headers=None,
 
 @app.route('/webhook', methods=['POST'])
 @crossdomain(origin='*')
+@cache.cached(timeout=50)
 def webhook():
+    start_time = time.time()
     req = request.get_json(silent=True, force=True)
     res = processHumanAPIRequest(req)
     res = json.dumps(res, indent=4)
     r = make_response(res)
     r.headers['Access-Control-Allow-Origin'] = "*"
+    print("--- %s seconds ---" % (time.time() - start_time))
     return r
 
 def processHumanAPIRequest(req):
@@ -81,7 +87,6 @@ def processHumanAPIRequest(req):
         access_token = os.environ[value]
         activity_url = activityurl + access_token + "&source=moves&end_date="+ date.today().strftime('%Y-%m-%d') + "&limit=1"
         location_url = locationurl + access_token + "&source=moves&end_date="+ date.today().strftime('%Y-%m-%d') + "&limit=1"
-
         activity = requests.get(activity_url)
         location = requests.get(location_url)
         activity_data = json.loads(activity.content)
@@ -104,7 +109,6 @@ def parseHumanData(activity_data,location_data):
     lat = str(location_data[0]["location"]["lat"])
     lon = str(location_data[0]["location"]["lon"])
     coord = lat + "," + lon
-    geolocator = Nominatim()
     location = geolocator.reverse(coord, exactly_one=True)
     address = location.raw['address']
     city = address.get('city', '')
