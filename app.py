@@ -7,7 +7,7 @@ import json
 import os
 import time
 
-from datetime import date, timedelta
+from datetime import datetime,tzinfo,timedelta
 from flask import Flask
 from flask import request, Response
 from flask import make_response, current_app
@@ -23,6 +23,21 @@ requests_cache.install_cache('moves-data')
 app = Flask(__name__)
 cache = Cache(app,config={'CACHE_TYPE': 'simple'})
 
+#Return timezones
+class Zone(tzinfo):
+    def __init__(self,offset,isdst,name):
+        self.offset = offset
+        self.isdst = isdst
+        self.name = name
+    def utcoffset(self, dt):
+        return timedelta(hours=self.offset) + self.dst(dt)
+    def dst(self, dt):
+            return timedelta(hours=1) if self.isdst else timedelta(0)
+    def tzname(self,dt):
+         return self.name
+
+
+#crossdomain decorator method
 def crossdomain(origin=None, methods=None, headers=None,
                 max_age=21600, attach_to_all=True,
                 automatic_options=True):
@@ -82,11 +97,15 @@ def processHumanAPIRequest(req):
     locationurl = "https://api.humanapi.co/v1/human/locations?access_token="
     user_tokens = {'daskalov':'HUMANAPI_ACCESS_TOKEN_DASKALOV','ari':'HUMANAPI_ACCESS_TOKEN_ARI','nadim':'HUMANAPI_ACCESS_TOKEN_NADIM', 'alex':'HUMANAPI_ACCESS_TOKEN_ALEXANDRA', 'imran':'HUMANAPI_ACCESS_TOKEN_IMRAN'}
     user_data = [None]*5
-    yesterday = date.today() - timedelta(1)
+    #Set the EST
+    EST = Zone(-5,False,'EST')
+    #create today's date in EST
+    today = datetime.now(EST).strftime('%Y-%m-%d')
     for key, value in user_tokens.iteritems():
         access_token = os.environ[value]
-        activity_url = activityurl + access_token + "&source=moves&end_date="+ date.today().strftime('%Y-%m-%d') + "&limit=1"
-        location_url = locationurl + access_token + "&source=moves&end_date="+ date.today().strftime('%Y-%m-%d') + "&limit=1"
+        activity_url = activityurl + access_token + "&source=moves&end_date="+ today + "&limit=1"
+        location_url = locationurl + access_token + "&source=moves&end_date="+ today + "&limit=1"
+        print activity_url
         activity = requests.get(activity_url)
         location = requests.get(location_url)
         activity_data = json.loads(activity.content)
