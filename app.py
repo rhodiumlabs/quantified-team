@@ -80,8 +80,8 @@ def webhook():
 def processHumanAPIRequest(req):
     activityurl = "https://api.humanapi.co/v1/human/activities/summaries?access_token="
     locationurl = "https://api.humanapi.co/v1/human/locations?access_token="
-    user_tokens = {'daskalov':'HUMANAPI_ACCESS_TOKEN_DASKALOV','ari':'HUMANAPI_ACCESS_TOKEN_ARI','nadim':'HUMANAPI_ACCESS_TOKEN_NADIM', 'alex':'HUMANAPI_ACCESS_TOKEN_ALEXANDRA'}
-    user_data = [None]*4
+    user_tokens = {'daskalov':'HUMANAPI_ACCESS_TOKEN_DASKALOV','ari':'HUMANAPI_ACCESS_TOKEN_ARI','nadim':'HUMANAPI_ACCESS_TOKEN_NADIM', 'alex':'HUMANAPI_ACCESS_TOKEN_ALEXANDRA', 'imran':'HUMANAPI_ACCESS_TOKEN_IMRAN'}
+    user_data = [None]*5
     yesterday = date.today() - timedelta(1)
     for key, value in user_tokens.iteritems():
         access_token = os.environ[value]
@@ -100,6 +100,8 @@ def processHumanAPIRequest(req):
             user_data[2] = data
         if key == 'nadim':
             user_data[3] = data
+        if key == 'imran':
+            user_data[4] = data
     res = makeWebhookResult(user_data)
     return res
 
@@ -149,10 +151,10 @@ def makeWebhookResult(user_data):
         },
     "Imran":
         {
-        "steps": user_data[3][0],
-        "calories": user_data[3][1],
-        "city": user_data[3][2],
-        "state": user_data[3][3]
+        "steps": user_data[4][0],
+        "calories": user_data[4][1],
+        "city": user_data[4][2],
+        "state": user_data[4][3]
         }
     }
 
